@@ -2,7 +2,7 @@ package main
 
 import "github.com/pkg/errors"
 
-var game *Game
+// var game *Game
 
 // Game ...
 type Game struct {
@@ -21,9 +21,18 @@ func NewGame() *Game {
 
 // State ...
 type State struct {
-	Board  [3][3]int
-	Player int
+	Board    [3][3]int
+	Player   int
+	NumMoves int
 }
+
+var (
+	// ErrGameOver ...
+	ErrGameOver = errors.New("game over")
+
+	// ErrGameDraw ...
+	ErrGameDraw = errors.New("game draw")
+)
 
 // MakeMove ...
 func (g *Game) MakeMove(x, y int) error {
@@ -31,9 +40,17 @@ func (g *Game) MakeMove(x, y int) error {
 		return errors.Wrap(err, "invalid move")
 	}
 
+	g.State.NumMoves++
+
+	if g.State.NumMoves == 9 {
+		return ErrGameDraw
+	}
+
 	g.State.Board[x][y] = g.State.Player
 
-	// check win condition!
+	if isWin(g.State.Board, g.State.Player) {
+		return ErrGameOver
+	}
 
 	switch g.State.Player {
 	case 1:
@@ -63,7 +80,9 @@ func isValidMoveFn(board [3][3]int, x, y int) error {
 	return nil
 }
 
-func isWin(board [3][3]int, player int) bool {
+var isWin = isWinFn
+
+func isWinFn(board [3][3]int, player int) bool {
 	for i := 0; i < len(winChecks); i++ {
 		if ok := winChecks[i](board, player); ok {
 			return true
