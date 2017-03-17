@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="TickDockToe">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tick-Dock-Toe</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <style>
+        body { padding-top: 70px; }
+
+        .cell { width: 40px; height: 40px; margin: 5px; }
+
+        .row-spacing { margin-top: 20px; }
+    </style>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+    <script type="text/javascript">
+        var game = angular.module('TickDockToe', [])
+
+        game.controller('GameCtrl', ['$scope', '$http', '$window', function($scope, $http, $window) {
+            $scope.state = {};
+            $scope.disabled = false;
+
+            $http.get('/state').then(
+                function(response) {
+                    $scope.state = response.data;
+                },
+                function() {
+                    $window.alert('Something broke!')
+                }
+            );
+
+            $scope.$watch('state.status', function(val) {
+                if (angular.isDefined(val)) {
+                    if (val != 'alive') {
+                        $scope.disabled = true;
+                    }
+                }
+            });
+
+            $scope.makeMove = function(x, y) {
+                var model = {
+                    'x': x,
+                    'y': y,
+                }
+
+                $http.put('/move', model).then(
+                    function(response) {
+                        $scope.state = response.data;
+                    },
+                    function() {
+                        $window.alert('Something broke!')
+                    }
+                )
+            }
+
+            $scope.newGame = function() {
+                if (!$window.confirm('Are you sure you wish to start a new game?')) {
+                    return;
+                }
+
+                $http.post('/new').then(
+                    function(response) {
+                        $scope.state = response.data;
+                        $scope.disabled = false;
+                    },
+                    function() {
+                        $window.alert('Something broke!')
+                    }
+                )
+            }
+        }])
+    </script>
+</head>
+
+<body ng-controller="GameCtrl">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Welcome to Tick-"Dock"-Toe!</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container theme-showcase" role="main">
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 text-center">
+                <div ng-repeat="y in [0, 1, 2]">
+                    <span ng-repeat="x in [0, 1, 2]">
+                        <button class="btn cell" ng-click="makeMove(x, y)" ng-disabled="disabled"
+                            ng-class="{'0': 'btn-default', '1': 'btn-info', '2': 'btn-success'}[state.board[x][y]]">
+                            <span ng-switch="state.board[x][y]">
+                                <span ng-switch-when="1">X</span>
+                                <span ng-switch-when="2">O</span>
+                                <span ng-switch-default class></span>
+                            </span>
+                        </button>
+                    <span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-spacing">
+            <div class="col-sm-offset-4 col-sm-4 text-center">
+                Current Turn:
+                <strong ng-switch="state.player">
+                    <span ng-switch-when="1" class="text-info">X</span>
+                    <span ng-switch-when="2" class="text-success">O</span>
+                </strong>
+                <span ng-switch="state.status">
+                    <span ng-switch-when="end" class="text-danger">Winner!</span>
+                    <span ng-switch-when="draw" class="text-danger">Draw!</span>
+                </span>
+
+            </div>
+        </div>
+
+        <div class="row row-spacing">
+            <div class="col-sm-offset-4 col-sm-4 text-center">
+                Move #: {{state.numMoves}}
+            </div>
+        </div>
+
+        <div class="row row-spacing">
+            <div class="col-sm-offset-4 col-sm-4">
+                <button class="btn btn-primary btn-block" ng-click="newGame()">New Game</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

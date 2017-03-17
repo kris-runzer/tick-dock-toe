@@ -9,47 +9,53 @@ type Game struct {
 	State *State
 }
 
-// NewGame ...
-func NewGame() *Game {
-	return &Game{
-		State: &State{
-			Board:  [3][3]int{},
-			Player: 1,
-		},
-	}
-}
-
 // State ...
 type State struct {
 	Board    [3][3]int
 	Player   int
 	NumMoves int
+	Status   string
 }
 
+// Available game states
 var (
-	// ErrGameOver ...
-	ErrGameOver = errors.New("game over")
-
-	// ErrGameDraw ...
-	ErrGameDraw = errors.New("game draw")
+	StatusAlive = "alive"
+	StatusDraw  = "draw"
+	StatusEnd   = "end"
 )
+
+// Reset ...
+func (g *Game) Reset() {
+	g.State = &State{
+		Board:    [3][3]int{},
+		Player:   1,
+		NumMoves: 0,
+		Status:   StatusAlive,
+	}
+}
 
 // MakeMove ...
 func (g *Game) MakeMove(x, y int) error {
-	if err := isValidMoveFn(g.State.Board, x, y); err != nil {
-		return errors.Wrap(err, "invalid move")
+	if g.State.Status == StatusDraw || g.State.Status == StatusEnd {
+		return errors.New("game over")
 	}
 
-	g.State.NumMoves++
-
-	if g.State.NumMoves == 9 {
-		return ErrGameDraw
+	if err := isValidMoveFn(g.State.Board, x, y); err != nil {
+		return errors.Wrap(err, "invalid move")
 	}
 
 	g.State.Board[x][y] = g.State.Player
 
 	if isWin(g.State.Board, g.State.Player) {
-		return ErrGameOver
+		g.State.Status = StatusEnd
+		return nil
+	}
+
+	g.State.NumMoves++
+
+	if g.State.NumMoves == 9 {
+		g.State.Status = StatusDraw
+		return nil
 	}
 
 	switch g.State.Player {
