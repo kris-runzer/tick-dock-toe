@@ -3,12 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "Lf3uUXTkKK5DJ37BxQvxO1Fq+K8=",
-			"path": "github.com/davecgh/go-spew/spew",
-			"revision": "6d212800a42e8ab5c146b8ace3490ee17e5225f9",
-			"revisionTime": "2016-09-07T16:21:46Z"
-		},
-		{
 			"checksumSHA1": "ynJSWoF6v+3zMnh9R0QmmG6iGV8=",
 			"path": "github.com/pkg/errors",
 			"revision": "248dadf4e9068a0b3e79f02ed0a610d935de5302",
