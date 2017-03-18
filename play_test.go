@@ -19,15 +19,15 @@ func TestPlayerOneWin(t *testing.T) {
 	_ = game.MakeMove(2, 1)
 	_ = game.MakeMove(0, 0)
 
-	expectedState := &State{
+	expectedGame := &Game{
 		Board:    testNew3x3Board(1, 2, 1, 1, 1, 2, 2, 2, 1),
 		Player:   1,
 		NumMoves: 9,
 		Status:   "end",
 	}
 
-	if !reflect.DeepEqual(expectedState, game.State) {
-		t.Errorf("unexpected state: %#v", game.State)
+	if !reflect.DeepEqual(expectedGame, game) {
+		t.Errorf("unexpected game: %#v", game)
 	}
 }
 
@@ -42,15 +42,15 @@ func TestPlayerTwoWin(t *testing.T) {
 	_ = game.MakeMove(2, 0)
 	_ = game.MakeMove(2, 1)
 
-	expectedState := &State{
+	expectedGame := &Game{
 		Board:    testNew3x3Board(1, 2, 1, 0, 2, 0, 1, 2, 0),
 		Player:   2,
 		NumMoves: 6,
 		Status:   "end",
 	}
 
-	if !reflect.DeepEqual(expectedState, game.State) {
-		t.Errorf("unexpected state: %#v", game.State)
+	if !reflect.DeepEqual(expectedGame, game) {
+		t.Errorf("unexpected game: %#v", game)
 	}
 }
 
@@ -68,14 +68,14 @@ func TestDraw(t *testing.T) {
 	_ = game.MakeMove(2, 0)
 	_ = game.MakeMove(1, 2)
 
-	expectedState := &State{
+	expectedGame := &Game{
 		Board:    testNew3x3Board(1, 2, 1, 2, 1, 1, 2, 1, 2),
 		Player:   1,
 		NumMoves: 9,
 		Status:   "draw",
 	}
 
-	if !reflect.DeepEqual(expectedState, game.State) {
-		t.Errorf("unexpected state: %#v", game.State)
+	if !reflect.DeepEqual(expectedGame, game) {
+		t.Errorf("unexpected game: %#v", game)
 	}
 }

@@ -2,13 +2,8 @@ package main
 
 import "github.com/pkg/errors"
 
-// Game ...
+// Game exposes functions for
 type Game struct {
-	State *State
-}
-
-// State ...
-type State struct {
 	Board    [3][3]int
 	Player   int
 	NumMoves int
@@ -24,43 +19,41 @@ var (
 
 // Reset ...
 func (g *Game) Reset() {
-	g.State = &State{
-		Board:    [3][3]int{},
-		Player:   1,
-		NumMoves: 0,
-		Status:   StatusAlive,
-	}
+	g.Board = [3][3]int{}
+	g.Player = 1
+	g.NumMoves = 0
+	g.Status = StatusAlive
 }
 
 // MakeMove ...
 func (g *Game) MakeMove(x, y int) error {
-	if g.State.Status == StatusDraw || g.State.Status == StatusEnd {
+	if g.Status == StatusDraw || g.Status == StatusEnd {
 		return errors.New("game over")
 	}
 
-	g.State.NumMoves++
+	g.NumMoves++
 
-	if err := isValidMove(g.State.Board, x, y); err != nil {
+	if err := isValidMove(g.Board, x, y); err != nil {
 		return errors.Wrap(err, "invalid move")
 	}
 
-	g.State.Board[x][y] = g.State.Player
+	g.Board[x][y] = g.Player
 
-	if isWin(g.State.Board, g.State.Player) {
-		g.State.Status = StatusEnd
+	if isWin(g.Board, g.Player) {
+		g.Status = StatusEnd
 		return nil
 	}
 
-	if g.State.NumMoves == 9 {
-		g.State.Status = StatusDraw
+	if g.NumMoves == 9 {
+		g.Status = StatusDraw
 		return nil
 	}
 
-	switch g.State.Player {
+	switch g.Player {
 	case 1:
-		g.State.Player = 2
+		g.Player = 2
 	case 2:
-		g.State.Player = 1
+		g.Player = 1
 	}
 
 	return nil

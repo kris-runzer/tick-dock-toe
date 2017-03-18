@@ -67,10 +67,10 @@ func NewNewGameHandlerFunc(game *Game) http.HandlerFunc {
 		game.Reset()
 
 		responseModel := DefaultResponseModel{
-			Board:    game.State.Board,
-			Player:   game.State.Player,
-			NumMoves: game.State.NumMoves,
-			Status:   game.State.Status,
+			Board:    game.Board,
+			Player:   game.Player,
+			NumMoves: game.NumMoves,
+			Status:   game.Status,
 		}
 
 		if err := json.NewEncoder(w).Encode(responseModel); err != nil {
@@ -97,10 +97,10 @@ func NewStateHandlerFunc(game *Game) http.HandlerFunc {
 		}
 
 		responseModel := DefaultResponseModel{
-			Board:    game.State.Board,
-			Player:   game.State.Player,
-			NumMoves: game.State.NumMoves,
-			Status:   game.State.Status,
+			Board:    game.Board,
+			Player:   game.Player,
+			NumMoves: game.NumMoves,
+			Status:   game.Status,
 		}
 
 		if err := json.NewEncoder(w).Encode(responseModel); err != nil {
@@ -132,10 +132,10 @@ func NewMakeMoveHandlerFunc(game *Game) http.HandlerFunc {
 		}
 
 		responseModel := DefaultResponseModel{
-			Board:    game.State.Board,
-			Player:   game.State.Player,
-			NumMoves: game.State.NumMoves,
-			Status:   game.State.Status,
+			Board:    game.Board,
+			Player:   game.Player,
+			NumMoves: game.NumMoves,
+			Status:   game.Status,
 		}
 
 		if err := json.NewEncoder(w).Encode(responseModel); err != nil {

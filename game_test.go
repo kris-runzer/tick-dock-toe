@@ -11,37 +11,37 @@ func TestGame_Reset(t *testing.T) {
 	game := &Game{}
 	game.Reset()
 
-	if game.State == nil {
+	if game == nil {
 		t.Fatalf("expected state to be instantiated")
 	}
 
 	expectedBoard := [3][3]int{}
 
-	if board := game.State.Board; !reflect.DeepEqual(expectedBoard, board) {
+	if board := game.Board; !reflect.DeepEqual(expectedBoard, board) {
 		t.Errorf("unexpected board: %#v", board)
 	}
 
-	if player := game.State.Player; 1 != player {
+	if player := game.Player; 1 != player {
 		t.Error("unexpected player:", player)
 	}
 
-	if numMoves := game.State.NumMoves; 0 != numMoves {
+	if numMoves := game.NumMoves; 0 != numMoves {
 		t.Error("unexpected numMoves:", numMoves)
 	}
 
-	if status := game.State.Status; "alive" != status {
+	if status := game.Status; "alive" != status {
 		t.Error("unexpected status:", status)
 	}
 }
 
 func TestGame_MakeMove_Noop(t *testing.T) {
-	game := &Game{State: &State{Status: StatusDraw}}
+	game := &Game{Status: StatusDraw}
 
 	if err := game.MakeMove(0, 0); "game over" != err.Error() {
 		t.Error("unexpected err:", err)
 	}
 
-	game = &Game{State: &State{Status: StatusEnd}}
+	game = &Game{Status: StatusEnd}
 
 	if err := game.MakeMove(0, 0); "game over" != err.Error() {
 		t.Error("unexpected err:", err)
@@ -65,7 +65,7 @@ func TestGame_MakeMove_InvalidMove(t *testing.T) {
 	}
 
 	board := testNew3x3Board(0, 1, 0, 0, 1, 0, 0, 0, 0)
-	game := &Game{State: &State{Board: board}}
+	game := &Game{Board: board}
 
 	if err := game.MakeMove(1, 2); "boom" != errors.Cause(err).Error() {
 		t.Error("unexpected err:", err)
@@ -104,7 +104,7 @@ func TestGame_MakeMove_ReturnsOnIsWin(t *testing.T) {
 	}
 
 	board := testNew3x3Board(0, 1, 0, 0, 1, 0, 0, 0, 0)
-	game := &Game{State: &State{Board: board, Player: 1}}
+	game := &Game{Board: board, Player: 1}
 
 	if err := game.MakeMove(1, 2); nil != err {
 		t.Error("unexpected err:", err)
@@ -119,7 +119,7 @@ func TestGame_MakeMove_ReturnsOnIsWin(t *testing.T) {
 		t.Error("unexpected player:", calledPlayer)
 	}
 
-	if status := game.State.Status; "end" != status {
+	if status := game.Status; "end" != status {
 		t.Error("unexpected status", status)
 	}
 }
@@ -139,22 +139,22 @@ func TestGame_MakeMove_ReturnsOnIsDraw(t *testing.T) {
 	}
 
 	board := testNew3x3Board(1, 2, 1, 2, 2, 1, 1, 0, 2)
-	game := &Game{State: &State{Board: board, Player: 1, NumMoves: 8}}
+	game := &Game{Board: board, Player: 1, NumMoves: 8}
 
 	if err := game.MakeMove(2, 1); nil != err {
 		t.Error("unexpected err:", err)
 	}
 
 	expectedBoard := testNew3x3Board(1, 2, 1, 2, 2, 1, 1, 1, 2)
-	if gameBoard := game.State.Board; !reflect.DeepEqual(expectedBoard, gameBoard) {
+	if gameBoard := game.Board; !reflect.DeepEqual(expectedBoard, gameBoard) {
 		t.Errorf("unexpected board: %#v", gameBoard)
 	}
 
-	if player := game.State.Player; 1 != player {
+	if player := game.Player; 1 != player {
 		t.Error("unexpected player:", player)
 	}
 
-	if status := game.State.Status; "draw" != status {
+	if status := game.Status; "draw" != status {
 		t.Error("unexpected status", status)
 	}
 }
@@ -174,7 +174,7 @@ func TestGame_MakeMove_SwitchesPlayer(t *testing.T) {
 	}
 
 	board := testEmpty3x3Board()
-	game := &Game{State: &State{Board: board, Player: 1}}
+	game := &Game{Board: board, Player: 1}
 
 	if err := game.MakeMove(2, 1); nil != err {
 		t.Error("unexpected err:", err)
@@ -184,11 +184,11 @@ func TestGame_MakeMove_SwitchesPlayer(t *testing.T) {
 	}
 
 	expectedBoard := testNew3x3Board(0, 0, 0, 0, 2, 0, 0, 1, 0)
-	if gameBoard := game.State.Board; !reflect.DeepEqual(expectedBoard, gameBoard) {
+	if gameBoard := game.Board; !reflect.DeepEqual(expectedBoard, gameBoard) {
 		t.Errorf("unexpected board: %#v", gameBoard)
 	}
 
-	if player := game.State.Player; 1 != player {
+	if player := game.Player; 1 != player {
 		t.Error("unexpected player:", player)
 	}
 }
