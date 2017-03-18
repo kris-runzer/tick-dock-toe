@@ -1,7 +1,7 @@
 # tick-dock-toe
-Simple tic-tac-toe game implemented with an AngularJS frontend and Go JSON API for game state
+Simple tic-tac-toe game implemented with an AngularJS frontend and Go JSON API for game state.
 
-All static assets are embedded as binary data into the executables using [go-bindata](https://github.com/jteeuwen/go-bindata)
+All static assets are embedded as binary data into the executables using [go-bindata](https://github.com/jteeuwen/go-bindata).
 
 ## Starting the Game
 #### 1. Clone repo then build and run Dockerfile
