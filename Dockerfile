@@ -1,4 +1,4 @@
-FROM golang:1.7-alpine
+FROM golang:1.8-alpine
 
 ADD ./ /go/src/github.com/kris-runzer/tick-dock-toe
 

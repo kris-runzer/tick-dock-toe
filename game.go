@@ -2,8 +2,6 @@ package main
 
 import "github.com/pkg/errors"
 
-// var game *Game
-
 // Game ...
 type Game struct {
 	State *State
@@ -42,7 +40,7 @@ func (g *Game) MakeMove(x, y int) error {
 
 	g.State.NumMoves++
 
-	if err := isValidMoveFn(g.State.Board, x, y); err != nil {
+	if err := isValidMove(g.State.Board, x, y); err != nil {
 		return errors.Wrap(err, "invalid move")
 	}
 

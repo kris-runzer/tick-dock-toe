@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/kris-runzer/tick-dock-toe/assets"
 )
 
 // HTTP Methods
@@ -14,8 +16,14 @@ const (
 	MethodPut  = "PUT"
 )
 
-// NewLoggingMiddlewareHandler ...
-func NewLoggingMiddlewareHandler(next http.HandlerFunc) http.HandlerFunc {
+var diff = diffFn
+
+func diffFn(start time.Time) time.Duration {
+	return time.Now().Sub(start)
+}
+
+// NewLoggingMiddlewareHandlerFunc ...
+func NewLoggingMiddlewareHandlerFunc(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sw := &statusResponseWriter{
 			ResponseWriter: w,
@@ -23,7 +31,7 @@ func NewLoggingMiddlewareHandler(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		defer func(start time.Time) {
-			log.Printf("[INFO] %s [%d] %s\n", r.RequestURI, sw.Status, time.Now().Sub(start))
+			log.Printf("[INFO] %s [%d] %s\n", r.RequestURI, sw.Status, diff(start))
 		}(time.Now())
 
 		next(sw, r)
@@ -48,8 +56,8 @@ func (w *statusResponseWriter) WriteHeader(status int) {
 	w.ResponseWriter.WriteHeader(status)
 }
 
-// NewNewGameHandler ....
-func NewNewGameHandler(game *Game) http.HandlerFunc {
+// NewNewGameHandlerFunc ....
+func NewNewGameHandlerFunc(game *Game) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -80,8 +88,8 @@ type DefaultResponseModel struct {
 	Status   string    `json:"status"`
 }
 
-// NewStateHandler ....
-func NewStateHandler(game *Game) http.HandlerFunc {
+// NewStateHandlerFunc ...
+func NewStateHandlerFunc(game *Game) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -102,8 +110,8 @@ func NewStateHandler(game *Game) http.HandlerFunc {
 	}
 }
 
-// NewMakeMoveHandler ...
-func NewMakeMoveHandler(game *Game) http.HandlerFunc {
+// NewMakeMoveHandlerFunc ...
+func NewMakeMoveHandlerFunc(game *Game) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != MethodPut {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -163,9 +171,8 @@ func IndexHandlerFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	html, err := assetsIndexHtmlBytes()
+	html, err := assets.Asset("index.html")
 	if err != nil {
-		// TODO: error page
 		log.Println("[ERROR] failed to retrieve asset index")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
