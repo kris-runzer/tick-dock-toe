@@ -2,7 +2,7 @@ package main
 
 import "github.com/pkg/errors"
 
-// Game exposes functions for
+// Game stores the state and exposes the API for playing the game
 type Game struct {
 	Board    [3][3]int
 	Player   int
@@ -17,7 +17,7 @@ var (
 	StatusEnd   = "end"
 )
 
-// Reset ...
+// Reset sets the state to represent a new game
 func (g *Game) Reset() {
 	g.Board = [3][3]int{}
 	g.Player = 1
@@ -25,7 +25,8 @@ func (g *Game) Reset() {
 	g.Status = StatusAlive
 }
 
-// MakeMove ...
+// MakeMove proccesses the next move at x, y.  This is the core function
+// for ensuring move validity and updating game state.
 func (g *Game) MakeMove(x, y int) error {
 	if g.Status == StatusDraw || g.Status == StatusEnd {
 		return errors.New("game over")
@@ -101,7 +102,7 @@ var defaultWinChecks = []WinCheck{
 	diagRightToLeftWinCheck,
 }
 
-// TODO Add comment hear explaining this
+// http://mathworld.wolfram.com/MagicSquare.html
 var magicNumberWeights = [3][3]int{
 	[3]int{8, 1, 6},
 	[3]int{3, 5, 7},

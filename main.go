@@ -17,10 +17,13 @@ func main() {
 	game.Reset()
 
 	mux := http.NewServeMux()
-	mux.Handle("/", NewLoggingMiddlewareHandlerFunc(IndexHandlerFunc))
-	mux.Handle("/state", NewLoggingMiddlewareHandlerFunc(NewStateHandlerFunc(game)))
-	mux.Handle("/move", NewLoggingMiddlewareHandlerFunc(NewMakeMoveHandlerFunc(game)))
-	mux.Handle("/new", NewLoggingMiddlewareHandlerFunc(NewNewGameHandlerFunc(game)))
+
+	mw := newLoggingMiddlewareHandlerFunc
+
+	mux.Handle("/", mw(indexHandlerFunc))
+	mux.Handle("/state", mw(newStateHandlerFunc(game)))
+	mux.Handle("/move", mw(newMakeMoveHandlerFunc(game)))
+	mux.Handle("/new", mw(newNewGameHandlerFunc(game)))
 
 	server := http.Server{
 		ReadTimeout:  5 * time.Second,

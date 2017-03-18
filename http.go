@@ -16,14 +16,7 @@ const (
 	MethodPut  = "PUT"
 )
 
-var diff = diffFn
-
-func diffFn(start time.Time) time.Duration {
-	return time.Now().Sub(start)
-}
-
-// NewLoggingMiddlewareHandlerFunc ...
-func NewLoggingMiddlewareHandlerFunc(next http.HandlerFunc) http.HandlerFunc {
+func newLoggingMiddlewareHandlerFunc(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sw := &statusResponseWriter{
 			ResponseWriter: w,
@@ -31,7 +24,7 @@ func NewLoggingMiddlewareHandlerFunc(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		defer func(start time.Time) {
-			log.Printf("[INFO] %s [%d] %s\n", r.RequestURI, sw.Status, diff(start))
+			log.Printf("[INFO] %s [%d] %s\n", r.RequestURI, sw.Status, time.Now().Sub(start))
 		}(time.Now())
 
 		next(sw, r)
@@ -56,8 +49,7 @@ func (w *statusResponseWriter) WriteHeader(status int) {
 	w.ResponseWriter.WriteHeader(status)
 }
 
-// NewNewGameHandlerFunc ....
-func NewNewGameHandlerFunc(game *Game) http.HandlerFunc {
+func newNewGameHandlerFunc(game *Game) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -80,7 +72,7 @@ func NewNewGameHandlerFunc(game *Game) http.HandlerFunc {
 	}
 }
 
-// DefaultResponseModel ...
+// DefaultResponseModel is return by all endpoints
 type DefaultResponseModel struct {
 	Board    [3][3]int `json:"board"`
 	Player   int       `json:"player"`
@@ -88,8 +80,7 @@ type DefaultResponseModel struct {
 	Status   string    `json:"status"`
 }
 
-// NewStateHandlerFunc ...
-func NewStateHandlerFunc(game *Game) http.HandlerFunc {
+func newStateHandlerFunc(game *Game) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -110,8 +101,7 @@ func NewStateHandlerFunc(game *Game) http.HandlerFunc {
 	}
 }
 
-// NewMakeMoveHandlerFunc ...
-func NewMakeMoveHandlerFunc(game *Game) http.HandlerFunc {
+func newMakeMoveHandlerFunc(game *Game) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != MethodPut {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -145,7 +135,7 @@ func NewMakeMoveHandlerFunc(game *Game) http.HandlerFunc {
 	}
 }
 
-// MoveModel ...
+// MoveModel represents the x,y coordinates of the move to make.
 type MoveModel struct {
 	X int `json:"x"`
 	Y int `json:"y"`
@@ -159,13 +149,12 @@ func jsonErrResponse(w http.ResponseWriter, err error) {
 	})
 }
 
-// ErrResponseModel ...
+// ErrResponseModel wraps a error in a JSON object
 type ErrResponseModel struct {
 	Err string `json:"error"`
 }
 
-// IndexHandlerFunc ...
-func IndexHandlerFunc(w http.ResponseWriter, r *http.Request) {
+func indexHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	if r.Method != MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
