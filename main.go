@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net"
 	"net/http"
@@ -11,7 +12,8 @@ import (
 )
 
 func main() {
-	bind := ":3000"
+	bind := flag.String("bind", ":3000", "the http binding port")
+	flag.Parse()
 
 	game := &Game{}
 	game.Reset()
@@ -31,7 +33,7 @@ func main() {
 		Handler:      mux,
 	}
 
-	listener, err := net.Listen("tcp", bind)
+	listener, err := net.Listen("tcp", *bind)
 	if err != nil {
 		log.Fatalln(err)
 		os.Exit(2)
