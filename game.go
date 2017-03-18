@@ -40,6 +40,8 @@ func (g *Game) MakeMove(x, y int) error {
 		return errors.New("game over")
 	}
 
+	g.State.NumMoves++
+
 	if err := isValidMoveFn(g.State.Board, x, y); err != nil {
 		return errors.Wrap(err, "invalid move")
 	}
@@ -50,8 +52,6 @@ func (g *Game) MakeMove(x, y int) error {
 		g.State.Status = StatusEnd
 		return nil
 	}
-
-	g.State.NumMoves++
 
 	if g.State.NumMoves == 9 {
 		g.State.Status = StatusDraw

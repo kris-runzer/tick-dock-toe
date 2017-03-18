@@ -13,7 +13,7 @@
     <style>
         body { padding-top: 70px; }
 
-        .cell { width: 40px; height: 40px; margin: 5px; }
+        .cell { width: 60px; height: 60px; margin: 5px; font-size: 30px; }
 
         .row-spacing { margin-top: 20px; }
     </style>
@@ -92,13 +92,13 @@
             <div class="col-sm-offset-4 col-sm-4 text-center">
                 <div ng-repeat="y in [0, 1, 2]">
                     <span ng-repeat="x in [0, 1, 2]">
-                        <button class="btn cell" ng-click="makeMove(x, y)" ng-disabled="disabled"
+                        <button class="btn cell" ng-click="makeMove(x, y)" ng-disabled="disabled || state.board[x][y] > 0"
                             ng-class="{'0': 'btn-default', '1': 'btn-info', '2': 'btn-success'}[state.board[x][y]]">
-                            <span ng-switch="state.board[x][y]">
+                            <strong ng-switch="state.board[x][y]">
                                 <span ng-switch-when="1">X</span>
                                 <span ng-switch-when="2">O</span>
                                 <span ng-switch-default class></span>
-                            </span>
+                            </strong>
                         </button>
                     <span>
                 </div>
